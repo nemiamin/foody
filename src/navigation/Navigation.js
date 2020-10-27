@@ -14,11 +14,13 @@ import Faq from '../screens/Faq';
 import Signature from '../screens/Signature';
 import Issue from '../screens/Issue';
 import Map from '../screens/Map';
+import GenerateOtp from '../screens/GenerateOtp';
 
 
 const UiStack = createStackNavigator();
 const UiNavigator = ({ navigation }) => (
     <UiStack.Navigator headerMode='none'>
+         <UiStack.Screen name='GenerateOtp' component={GenerateOtp} />
         <UiStack.Screen name='Login' component={Login} />
         <UiStack.Screen name='Dashboard' component={Dashboard} />
         <UiStack.Screen name='Profile' component={Profile} />
@@ -29,6 +31,7 @@ const UiNavigator = ({ navigation }) => (
         <UiStack.Screen name='Signature' component={Signature} />
         <UiStack.Screen name='Issue' component={Issue} />
         <UiStack.Screen name='Map' component={Map} />
+       
     </UiStack.Navigator>
 )
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, ToastAndroid, BackHandler } from 'react-native';
 import { red } from '../assets/colors';
 import { height, width } from '../assets/dimensions';
@@ -8,9 +8,16 @@ import { connect } from 'react-redux';
 import { login } from '../action/auth';
 import Toast from 'react-native-toast-message';
 
-const Login = ({ navigation, login }) => {
+const Login = ({ navigation, login, route }) => {
+
+    useEffect(()=>{
+        if(route.params.otp) {
+            setForm({mobile: route.params.mobile, otp: route.params.otp})
+        }
+    },[])
+
     const [ form, setForm ] = useState({
-        email: '', password: ''
+        mobile: '', otp: ''
     });
     const changeInput = (e, name) => {
         setForm({
@@ -22,14 +29,14 @@ const Login = ({ navigation, login }) => {
         const response = await login(form);
         if(response.success) {
             setForm({
-                email: '', password: ''
+                mobile: '', otp: ''
             });
               navigation.navigate('Dashboard');
             console.log(response.data);
         }
     }
 
-    const { email, password } = form;
+    const { mobile, otp } = form;
     return (
         <ScrollView style={{
             flex: 1
@@ -44,15 +51,15 @@ const Login = ({ navigation, login }) => {
             <View style={styles.formContainer}>
                 <View style={styles.space}>
                 <Text style={styles.text}>
-                    UserName
+                    Mobile
                 </Text>
-                <Input changeInput={changeInput} value={email} name='email' up={true} />
+                <Input changeInput={changeInput} value={mobile} name='mobile' up={true} />
                 </View>
                 <View style={styles.space}>
                 <Text style={styles.text}>
-                    Password
+                    OTP
                 </Text>
-                <Input changeInput={changeInput} value={password} name='password' secureTextEntry={true} />
+                <Input changeInput={changeInput} value={otp} name='otp' secureTextEntry={true} />
                 </View>
                 <View style={{ marginTop: height * 0.08 }}>
                 <Button label={"LOGIN"} clickEvent={() => loginUser()} />

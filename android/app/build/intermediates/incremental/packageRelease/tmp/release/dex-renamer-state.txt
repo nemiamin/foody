@@ -1,4 +1,4 @@
-#Fri Oct 16 05:47:20 IST 2020
+#Wed Oct 28 00:42:16 IST 2020
 base.0=/Users/nemiamin/Downloads/foody/android/app/build/intermediates/dex/release/mergeDexRelease/out/classes.dex
 path.1=classes2.dex
 renamed.1=classes2.dex
