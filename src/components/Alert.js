@@ -5,7 +5,6 @@ const { height, width } = Dimensions.get('window');
 import { reset } from '../action/toast';
 
 const Alert = ({ toasts, reset }) => {
-    console.log(toasts, 'toasts')
     return (
        <Fragment>
         {toasts && (
@@ -13,7 +12,7 @@ const Alert = ({ toasts, reset }) => {
                 toasts.map(toast => (
                     <TouchableOpacity key={toast.id} style={{ backgroundColor: toast.type !== 'err' ? 'white' : 'white', paddingVertical: 20, paddingHorizontal: 20, position: 'absolute', top: 20, width: width * 0.9, marginHorizontal: 15, alignItems: 'flex-start', borderRadius:5, elevation:10, display:'flex',flexDirection:'row', alignContent:'center' }} onPress={() => {
                         reset(toast.id)
-                        console.log(toast.login, 'islogin')
+           
                        
                     } }>
                         { toast.type !== 'err' ? 

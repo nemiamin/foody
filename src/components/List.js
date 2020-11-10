@@ -3,8 +3,15 @@ import { View, StyleSheet, Image, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { light_green, light_grey } from '../assets/colors';
 import { height, width } from '../assets/dimensions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const List = ({navigation}) => {
+const List = ({navigation, item}) => {
+
+    const startDelivery = (item) => {
+        AsyncStorage.setItem('deliveryStart', 'true');
+        AsyncStorage.setItem('delivery', JSON.stringify(item));
+        navigation.navigate('Map', {item: item})
+    }
     return (
         <View style={styles.list}>
             <View style={styles.r}>
@@ -13,7 +20,7 @@ const List = ({navigation}) => {
                 </View>
                 <View style={{ flex: 0.8, justifyContent: 'center' }}>
                     <Text style={{ letterSpacing: 1 }}>
-                        Delivery #7868
+                        Delivery #{item.deliveryorder_id}
                     </Text>
                 </View>
             </View>
@@ -23,7 +30,7 @@ const List = ({navigation}) => {
                 </View>
                 <View style={{ flex: 0.8, justifyContent: 'center' }}>
                     <Text style={{ letterSpacing: 1 }}>
-                        4 Items
+                        {item.order_count} Items
                     </Text>
                 </View>
             </View>
@@ -33,7 +40,7 @@ const List = ({navigation}) => {
                 </View>
                 <View style={{ flex: 0.8, justifyContent: 'center' }}>
                     <Text style={{ letterSpacing: 1 }}>
-                        6201 - Mumbai
+                        {item.dropadd}
                     </Text>
                 </View>
             </View>
@@ -43,14 +50,14 @@ const List = ({navigation}) => {
                 </View>
                 <View style={{ flex: 0.8, justifyContent: 'center' }}>
                     <Text style={{ letterSpacing: 1 }}>
-                        SAM
+                        {item.company_name}
                     </Text>
                 </View>
             </View>
         <View style={styles.b}>
         <View style={{ flex: 0.6 }}></View>
         <View style={{ flex: 0.4, alignItems: 'center' }}>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Map')}>
+            <TouchableOpacity style={styles.button} onPress={() => startDelivery(item)}>
                 <Text style={{ fontSize: 18, color: 'white' }}>
                     Start
                 </Text>

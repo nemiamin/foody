@@ -1,11 +1,17 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 import { View, Text, Image, TextInput, ScrollView, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
-import { height } from '../assets/dimensions';
 import Header from '../components/Header';
 import Rbutton from '../components/Rbutton';
 import { RNCamera, FaceDetector } from 'react-native-camera';
+import {deliverFail} from '../action/auth';
+import { connect } from 'react-redux';
+import { height, width } from '../assets/dimensions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Issue = ({ navigation }) => {
+const Issue = ({ navigation, deliverFail }) => {
+  const [reason, setReason] = useState('');
+  const [image, setImage] = useState(null) 
+  const [camera, setCamera] = useState(null)
   function handleBackButtonClick() {
     navigation.goBack();
     return true;
@@ -17,13 +23,36 @@ useEffect(() => {
     backHandler.remove();
   };
 }, []);
-    takePicture = async () => {
-    if (this.camera) {
+    const takePicture = async () => {
+    if (camera) {
       const options = { quality: 0.5, base64: true };
-      const data = await this.camera.takePictureAsync(options);
-      console.log(data.uri);
+      const data = await camera.takePictureAsync(options);
+      console.log(data);
+      setImage(data)
     }
   };
+  const changeInput = (e) => {
+    setReason(e);
+  }
+
+  const submit = async () => {
+    const delivery = await AsyncStorage.getItem('delivery');
+    const formData = new FormData()
+    formData.append('v_id', JSON.parse(delivery).delivery_boy)
+    formData.append('deliveryorder_id', JSON.parse(delivery).deliveryorder_id)
+    formData.append('d_id', JSON.parse(delivery).delivery_boy)
+    formData.append('snap', {name: 'signature.jpg',
+    type: 'img/JPG',
+    uri:
+      Platform.OS === 'android' ? image.uri : image.uri.replace('file://', ''),
+  })
+    const response = await deliverFail(formData);
+    if(response.success) {
+      AsyncStorage.removeItem('deliveryStart');
+            AsyncStorage.removeItem('delivery');
+            navigation.navigate('Dashboard');
+    }
+  }
     return (
          <View style={styles.container}>
          <Header back={true} navigation={navigation} />
@@ -33,11 +62,11 @@ useEffect(() => {
              </Text>
          </View>
         <View style={{flex: 3}}>
-       
-        <RNCamera
-          ref={ref => {
-            this.camera = ref;
-          }}
+        {image && <Image source={{uri: image.uri}} style={{height: height*0.4, width:width}} />}
+        {!image && <RNCamera
+        ref={ref => {
+          setCamera(ref)
+        }}
           style={styles.preview}
           type={RNCamera.Constants.Type.back}
           flashMode={RNCamera.Constants.FlashMode.on}
@@ -53,23 +82,21 @@ useEffect(() => {
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
           }}
-          onGoogleVisionBarcodesDetected={({ barcodes }) => {
-            console.log(barcodes);
-          }}
-        />
-        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
+      
+        />}
+        {!image && <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={()=>takePicture()} style={styles.capture}>
             <Text style={{ fontSize: 14 }}> SNAP </Text>
           </TouchableOpacity>
-        </View>
+        </View>}
         
       </View>
       
              <View style={{ flex: 1, marginVertical: 0 }}>
-                 <TextInput multiline={true} numberOfLines={10} placeholder='Reason For Cancellation' style={{ backgroundColor: 'white', marginHorizontal: 10, textAlign: 'left', elevation: 6 }} />
+                 <TextInput multiline={true} numberOfLines={10} placeholder='Reason For Cancellation' style={{ backgroundColor: 'white', marginHorizontal: 10, textAlign: 'left', elevation: 6 }} onChangeText={(e)=>changeInput(e)} />
              </View>
              <View style={{ flex: 0.5 }}>
-               <Rbutton label='SUBMIT' />
+               <Rbutton label='SUBMIT' click={()=>submit()} />
          </View>
          </View>
         // <View style={{ flex: 1 }}>
@@ -114,4 +141,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Issue
+const mapStateToProps = state => ({
+
+})
+
+
+export default connect(
+    mapStateToProps, {
+        deliverFail
+    }
+) (Issue);

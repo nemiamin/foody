@@ -9,7 +9,18 @@ import { login } from '../action/auth';
 import Toast from 'react-native-toast-message';
 
 const Login = ({ navigation, login, route }) => {
+    function handleBackButtonClick() {
+        navigation.goBack();
+        return true;
+    }
 
+    
+    useEffect(() => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+      return () => {
+        backHandler.remove();
+      };
+    }, []);
     useEffect(()=>{
         if(route.params.otp) {
             setForm({mobile: route.params.mobile, otp: route.params.otp})
@@ -59,7 +70,7 @@ const Login = ({ navigation, login, route }) => {
                 <Text style={styles.text}>
                     OTP
                 </Text>
-                <Input changeInput={changeInput} value={otp} name='otp' secureTextEntry={true} />
+                <Input changeInput={changeInput} value={otp} name='otp' />
                 </View>
                 <View style={{ marginTop: height * 0.08 }}>
                 <Button label={"LOGIN"} clickEvent={() => loginUser()} />
